@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Butter Roo 袋鼠甜點工作室 - 線上預訂</title>
+    <style>
+        body { font-family: '微軟正黑體', sans-serif; background-color: #FFF9F2; color: #4A4A4A; margin: 0; padding: 0; }
+        header { background-color: #FFB74D; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        header h1 { margin: 0; font-size: 1.5em; }
+        .line-btn { background: white; color: #FF9800; text-decoration: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .line-btn:hover { background: #ffe0b2; }
+        
+        .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
+        .store-notice { background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #FF9800; font-size: 0.95em; line-height: 1.5; }
+        
+        /* 產品列表網格 */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
+        .product-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.05); transition: 0.3s; position: relative; }
+        .product-card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+        
+        /* 招牌標籤 */
+        .signature-badge { position: absolute; top: 10px; right: 10px; background-color: #f44336; color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.8em; font-weight: bold; z-index: 10; }
+        
+        /* 圖片區塊 (實務上請換成真實圖片網址) */
+        .product-img-placeholder { width: 100%; height: 160px; object-fit: cover; background-color: #FFE0B2; display: flex; align-items: center; justify-content: center; color: #E65100; font-weight: bold; font-size: 0.9em; text-align: center; padding: 10px; box-sizing: border-box; }
+        
+        .product-info { padding: 12px; text-align: center; }
+        .product-name-cn { font-size: 1.1em; font-weight: bold; margin-bottom: 2px; color: #333; }
+        .product-name-en { font-size: 0.85em; color: #777; margin-bottom: 8px; font-style: italic; }
+        .product-price { color: #E65100; font-size: 1.1em; font-weight: bold; margin-bottom: 12px; }
+        
+        /* 數量控制器 */
+        .qty-control { display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 12px; }
+        .qty-btn { background: #f0f0f0; border: none; width: 30px; height: 30px; border-radius: 6px; font-size: 1.1em; cursor: pointer; color: #555; }
+        .qty-btn:hover { background: #e0e0e0; }
+        .qty-input { width: 35px; text-align: center; border: 1px solid #ddd; border-radius: 6px; padding: 6px; font-size: 0.9em; }
+        
+        .add-btn { background: #FF9800; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; font-size: 0.95em; font-weight: bold; cursor: pointer; }
+        .add-btn:hover { background: #F57C00; }
+
+        /* 購物車與聯絡資料區 */
+        .cart-section { margin-top: 30px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .cart-section h2 { margin-top: 0; border-bottom: 2px solid #FF9800; padding-bottom: 8px; font-size: 1.4em; }
+        #cart-items { list-style: none; padding: 0; margin: 0 0 15px 0; }
+        #cart-items li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #eee; font-size: 1em; }
+        .cart-total { text-align: right; font-size: 1.3em; font-weight: bold; margin-bottom: 15px; color: #E65100; }
+        
+        /* 顧客表單 */
+        .customer-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+        .customer-form input { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95em; }
+        
+        .checkout-btn { background: #00C300; color: white; border: none; width: 100%; padding: 14px; border-radius: 6px; font-size: 1.1em; font-weight: bold; cursor: pointer; text-align: center; display: block; text-decoration: none; }
+        .checkout-btn:hover { background: #00A000; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Butter Roo 袋鼠甜點工作室</h1>
+        <a href="https://line.me/R/ti/p/@069pytqk" class="line-btn" target="_blank">💬 聯絡小幫手</a>
+    </header>
+
+    <div class="container">
+        <div class="store-notice">
+            📢 <strong>訂購須知：</strong><br>
+            請選擇您喜愛的甜點與數量，確認無誤後點擊最下方的「送出訂單至 LINE (@069pytqk)」。系統會自動帶您前往官方帳號對話框，小幫手確認訂單後會回覆您取貨時間喔！
+        </div>
+
+        <div class="product-grid" id="product-grid">
+            </div>
+
+        <div class="cart-section">
+            <h2>🛒 您的預訂清單</h2>
+            <ul id="cart-items">
+                <li style="color: #999;">尚未選擇商品</li>
+            </ul>
+            <div class="cart-total">總計: NT$ <span id="total-price">0</span></div>
+            
+            <div class="customer-form">
+                <input type="text" id="cus-name" placeholder="您的姓名 (必填)" required>
+                <input type="tel" id="cus-phone" placeholder="聯絡電話 (必填)" required>
+            </div>
+
+            <button class="checkout-btn" onclick="checkout()">✅ 送出訂單至 LINE (@069pytqk)</button>
+        </div>
+    </div>
+
+    <script>
+        // 全品項數據數據 (價格為根據市場一般價格設定)
+        const products = [
+            { nameCN: '生乳卡士達', nameEN: 'Original Custard', price: 60, signature: true, inputId: 'qty1' },
+            { nameCN: '法芙娜可可', nameEN: 'Valrhona Cocoa', price: 70, signature: false, inputId: 'qty2' },
+            { nameCN: '靜岡濃抹茶', nameEN: 'Shizuoka Green Tea', price: 75, signature: false, inputId: 'qty3' },
+            { nameCN: '牛奶卡士達', nameEN: 'Milk Custard', price: 60, signature: true, inputId: 'qty4' },
+            { nameCN: '砂糖橘卡士達', nameEN: 'Sugar Orange Custard', price: 85, signature: false, inputId: 'qty5' },
+            { nameCN: '酪梨尬布丁', nameEN: 'Avocado w/ Pudding', price: 90, signature: true, inputId: 'qty6' },
+            { nameCN: '貓山王榴槤', nameEN: 'Mao Shan Wang Durian', price: 120, signature: false, inputId: 'qty7' },
+            { nameCN: '砂糖橘卡士達球', nameEN: 'Sugar Orange Custard Ball', price: 95, signature: false, inputId: 'qty8' },
+            { nameCN: '泰泰生乳球', nameEN: 'Thai Milk Tea Custard Ball', price: 80, signature: false, inputId: 'qty9' },
+            { nameCN: '草莓卡士達', nameEN: 'Strawberry Custard', price: 95, signature: false, inputId: 'qty10' },
+            { nameCN: '綜合Mini小泡芙', nameEN: 'Mixed Mini Puffs', price: 150, signature: false, inputId: 'qty11' },
+            { nameCN: '檸檬Mini小泡芙', nameEN: 'Lemon Mini Puffs', price: 140, signature: false, inputId: 'qty12' },
+            { nameCN: '焦糖脆皮球', nameEN: 'Caramel Crispy Ball', price: 85, signature: false, inputId: 'qty13' },
+            { nameCN: '法式爆漿檸檬塔', nameEN: 'French Lava Lemon Tart', price: 130, signature: true, inputId: 'qty14' }
+        ];
+
+        let cart = [];
+        let total = 0;
+
+        // 動態生成產品列表
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            products.forEach(p => {
+                grid.innerHTML += `
+                    <div class="product-card">
+                        ${p.signature ? '<div class="signature-badge">招牌</div>' : ''}
+                        <div class="product-img-placeholder">${p.nameCN}<br>${p.nameEN}</div>
+                        <div class="product-info">
+                            <div class="product-name-cn">${p.nameCN}</div>
+                            <div class="product-name-en">${p.nameEN}</div>
+                            <div class="product-price">NT$ ${p.price}</div>
+                            <div class="qty-control">
+                                <button class="qty-btn" onclick="changeQty('${p.inputId}', -1)">-</button>
+                                <input type="number" id="${p.inputId}" class="qty-input" value="1" min="1">
+                                <button class="qty-btn" onclick="changeQty('${p.inputId}', 1)">+</button>
+                            </div>
+                            <button class="add-btn" onclick="addToCart('${p.nameCN}', ${p.price}, '${p.inputId}')">加入清單</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function changeQty(id, amount) {
+            let el = document.getElementById(id);
+            let val = parseInt(el.value) + amount;
+            if (val >= 1) el.value = val;
+        }
+
+        function addToCart(name, price, id) {
+            let qty = parseInt(document.getElementById(id).value);
+            let item = cart.find(i => i.name === name);
+            if (item) item.qty += qty;
+            else cart.push({ name, price, qty });
+            
+            updateCart();
+            document.getElementById(id).value = 1;
+        }
+
+        function updateCart() {
+            let list = document.getElementById('cart-items');
+            list.innerHTML = '';
+            total = 0;
+
+            if (cart.length === 0) {
+                list.innerHTML = '<li style="color: #999;">尚未選擇商品</li>';
+            } else {
+                cart.forEach((item, index) => {
+                    let sub = item.price * item.qty;
+                    total += sub;
+                    list.innerHTML += `
+                        <li>
+                            <span>${item.name} x ${item.qty}</span>
+                            <span>NT$ ${sub} <button onclick="remove(${index})" style="color:red; background:none; border:none; cursor:pointer;">✖</button></span>
+                        </li>`;
+                });
+            }
+            document.getElementById('total-price').innerText = total;
+        }
+
+        function remove(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        function checkout() {
+            if (cart.length === 0) return alert("請先選擇要預訂的甜點喔！");
+            
+            let name = document.getElementById('cus-name').value;
+            let phone = document.getElementById('cus-phone').value;
+            if (!name || !phone) return alert("請填寫姓名與電話，方便小幫手聯絡您！");
+
+            let text = `您好，我要預訂甜點！\n\n👤 姓名：${name}\n📞 電話：${phone}\n\n📝 訂單清單：\n`;
+            cart.forEach(item => {
+                text += `▪️ ${item.name} x ${item.qty} (NT$${item.price * item.qty})\n`;
+            });
+            text += `\n💰 總計金額：NT$ ${total}\n----------------\n請確認是否接單，謝謝！`;
+
+            // 使用 LINE OA Message 連結格式，自動帶入文字給您的官方帳號
+            let encoded = encodeURIComponent(text);
+            window.location.href = `https://line.me/R/oaMessage/@069pytqk/?${encoded}`;
+        }
+
+        // 初始化
+        renderProducts();
+    </script>
+</body>
+</html>
