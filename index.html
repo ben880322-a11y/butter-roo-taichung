@@ -7,163 +7,133 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #FFB74D; --secondary: #E65100; --bg: #FFFBF5; --text: #3E2723; }
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; scroll-behavior: smooth; }
-        nav { position: fixed; top: 0; width: 100%; height: 65px; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-sizing: border-box; box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 1000; }
-        .logo { font-size: 1.4rem; font-weight: bold; color: var(--secondary); letter-spacing: 1px; }
-        .menu-btn { font-size: 1.5rem; cursor: pointer; color: var(--secondary); }
-        .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding: 30px 20px; box-sizing: border-box; }
-        .sidebar.active { left: 0; }
-        .sidebar-links { list-style: none; padding: 0; }
-        .sidebar-links li { padding: 15px 0; border-bottom: 1px solid #f0f0f0; cursor: pointer; font-weight: bold; }
-        .hero { height: 25vh; background: #FFB74D; display: flex; align-items: center; justify-content: center; color: white; margin-top: 65px; text-align: center; }
-        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
-        .category-title { text-align: left; margin: 40px 0 20px 0; font-size: 1.6rem; color: var(--secondary); border-left: 6px solid var(--primary); padding-left: 15px; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-        .product-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; text-align: center; }
-        .product-img { width: 100%; height: 180px; object-fit: cover; background: #fafafa; }
-        .product-info { padding: 15px; }
-        .product-name { font-weight: bold; margin-bottom: 10px; height: 3em; display: flex; align-items: center; justify-content: center; }
-        .price { color: var(--secondary); font-weight: bold; margin-bottom: 15px; }
-        .qty-box { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .qty-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ddd; background: white; cursor: pointer; }
-        .add-btn { background: var(--primary); color: white; border: none; padding: 10px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .cart-section { background: white; border-radius: 20px; padding: 25px; margin-top: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .checkout-input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .line-btn { background: #06C755; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        footer { text-align: center; padding: 40px; color: #999; }
+        :root { --p: #FFB74D; --s: #E65100; --bg: #FFFBF5; }
+        body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; }
+        nav { position: fixed; top: 0; width: 100%; height: 60px; background: white; display: flex; align-items: center; padding: 0 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 1000; box-sizing: border-box; }
+        .logo { font-weight: bold; color: var(--s); font-size: 1.2rem; margin-left: 15px; }
+        .hero { height: 150px; background: var(--p); color: white; display: flex; align-items: center; justify-content: center; margin-top: 60px; text-align: center; }
+        .container { max-width: 1000px; margin: auto; padding: 20px; }
+        .title { border-left: 5px solid var(--p); padding-left: 10px; margin: 30px 0 20px; color: var(--s); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+        .card { background: white; border-radius: 10px; overflow: hidden; border: 1px solid #eee; display: flex; flex-direction: column; }
+        .img { width: 100%; height: 150px; object-fit: cover; background: #eee; }
+        .info { padding: 10px; text-align: center; flex-grow: 1; }
+        .name { font-weight: bold; font-size: 1rem; margin-bottom: 5px; min-height: 2.5em; }
+        .price { color: var(--s); font-weight: bold; margin-bottom: 10px; }
+        .btn { background: var(--p); color: white; border: none; padding: 8px; width: 100%; border-radius: 5px; cursor: pointer; }
+        .cart { background: white; padding: 20px; border-radius: 10px; margin-top: 40px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .input { width: 100%; padding: 10px; margin: 5px 0; box-sizing: border-box; border: 1px solid #ddd; border-radius: 5px; }
+        .line-btn { background: #06C755; color: white; border: none; width: 100%; padding: 15px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 15px; }
     </style>
 </head>
 <body>
 
-    <div class="sidebar" id="sidebar">
-        <div style="text-align:right; font-size:2rem; cursor:pointer;" onclick="toggleMenu()">&times;</div>
-        <h3>瀏覽目錄</h3>
-        <ul class="sidebar-links">
-            <li onclick="location.href='#cat-1'; toggleMenu();">人氣泡芙</li>
-            <li onclick="location.href='#cat-2'; toggleMenu();">精緻甜點/可頌</li>
-            <li onclick="location.href='#cat-3'; toggleMenu();">咖啡系列</li>
-            <li onclick="location.href='#cart'; toggleMenu();">預訂清單</li>
-        </ul>
-    </div>
-
     <nav>
-        <div class="menu-btn" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
-        <div class="logo">BUTTER ROO.</div>
-        <div style="width:24px;"></div>
+        <i class="fas fa-bars" style="font-size:1.5rem; color:orange;"></i>
+        <div class="logo">BUTTER ROO TAICHUNG</div>
     </nav>
 
-    <section class="hero">
-        <div><h1 style="margin:0;">奶油袋鼠漢口店</h1><p>DAILY FRESH BAKED</p></div>
-    </section>
+    <div class="hero">
+        <div><h2 style="margin:0;">奶油袋鼠 漢口店</h2><p style="margin:5px 0 0;">21款現烤美味</p></div>
+    </div>
 
     <div class="container">
-        <div id="cat-1"><h2 class="category-title">人氣泡芙系列</h2><div class="product-grid" id="grid-1"></div></div>
-        <div id="cat-2"><h2 class="category-title">精緻甜點與可頌</h2><div class="product-grid" id="grid-2"></div></div>
-        <div id="cat-3"><h2 class="category-title">咖啡系列</h2><div class="product-grid" id="grid-3"></div></div>
+        <h3 class="title">人氣泡芙系列</h3>
+        <div class="grid" id="g1"></div>
 
-        <div class="cart-section" id="cart">
-            <h2><i class="fas fa-shopping-basket"></i> 預訂清單</h2>
-            <div id="cart-display">尚未選擇品項</div>
-            <div style="text-align:right; font-size:1.4rem; font-weight:bold; color:var(--secondary); margin: 20px 0;">
-                總計 NT$ <span id="total-price">0</span>
-            </div>
-            <input type="text" id="user-name" class="checkout-input" placeholder="訂購人姓名">
-            <input type="tel" id="user-phone" class="checkout-input" placeholder="聯絡電話">
-            <button class="line-btn" onclick="sendOrder()">送出預訂至 LINE</button>
+        <h3 class="title">精緻甜點與可頌</h3>
+        <div class="grid" id="g2"></div>
+
+        <h3 class="title">咖啡系列</h3>
+        <div class="grid" id="g3"></div>
+
+        <div class="cart" id="cart">
+            <h3>預訂清單</h3>
+            <div id="cart-list">尚未選擇。</div>
+            <p style="text-align:right;">總計: NT$ <span id="total">0</span></p>
+            <input type="text" id="user" class="input" placeholder="姓名">
+            <input type="tel" id="tel" class="input" placeholder="電話">
+            <button class="line-btn" onclick="send()">傳送預訂至 LINE</button>
         </div>
     </div>
 
-    <footer>&copy; 2026 Butter Roo 奶油袋鼠漢口店</footer>
-
     <script>
-        // 21 個完整品項數據
-        const items = [
+        const data = [
             { c: 1, n: "生乳卡士達", p: 60, i: "1.jpg" },
             { c: 1, n: "草莓卡士達", p: 95, i: "2.jpg" },
             { c: 1, n: "法芙娜可可", p: 70, i: "3.jpg" },
             { c: 1, n: "白葡萄卡士達", p: 90, i: "4.jpg" },
             { c: 1, n: "靜岡濃抹茶", p: 75, i: "5.jpg" },
             { c: 1, n: "砂糖橘卡士達", p: 85, i: "6.jpg" },
-            { c: 1, n: "酪梨尬布丁", p: 90, i: "7.jpg" },
-            { c: 1, n: "mini小泡芙 (招牌波羅)", p: 150, i: "8.jpg" },
-            { c: 1, n: "mini小泡芙 (經典日式)", p: 140, i: "9.jpg" },
-            { c: 2, n: "提拉米蘇", p: 120, i: "10.jpg" },
-            { c: 2, n: "雲朵山竹", p: 110, i: "11.jpg" },
-            { c: 2, n: "重乳酪炙燒起司", p: 100, i: "12.jpg" },
-            { c: 2, n: "貓山王榴槤", p: 120, i: "13.jpg" },
-            { c: 2, n: "酸甜檸檬乳酪", p: 95, i: "14.jpg" },
-            { c: 2, n: "肉鬆鹹蛋黃乳酪", p: 90, i: "15.jpg" },
-            { c: 2, n: "酸溜溜檸檬", p: 85, i: "16.jpg" },
+            { c: 1, n: "提拉米蘇", p: 120, i: "7.jpg" },
+            { c: 1, n: "雲朵山竹", p: 110, i: "8.jpg" },
+            { c: 1, n: "重乳酪炙燒起司", p: 100, i: "9.jpg" },
+            { c: 1, n: "貓山王榴槤", p: 120, i: "10.jpg" },
+            { c: 1, n: "酸甜檸檬乳酪", p: 95, i: "11.jpg" },
+            { c: 1, n: "酪梨尬布丁", p: 90, i: "12.jpg" },
+            { c: 1, n: "肉鬆鹹蛋黃乳酪", p: 90, i: "13.jpg" },
+            { c: 1, n: "酸溜溜檸檬", p: 85, i: "14.jpg" },
+            { c: 2, n: "mini小泡芙招牌波羅", p: 150, i: "15.jpg" },
+            { c: 2, n: "mini小泡芙經典日式", p: 140, i: "16.jpg" },
             { c: 2, n: "蜜糖可頌", p: 55, i: "17.jpg" },
             { c: 2, n: "蛋塔可頌", p: 65, i: "18.jpg" },
-            { c: 3, n: "美式咖啡 (冰/熱)", p: 65, i: "19.jpg" },
-            { c: 3, n: "拿鐵咖啡 (冰/熱)", p: 85, i: "20.jpg" },
-            { c: 3, n: "阿芙佳朵 (冰)", p: 110, i: "21.jpg" }
+            { c: 3, n: "美式咖啡(冰/熱)", p: 65, i: "19.jpg" },
+            { c: 3, n: "拿鐵咖啡(冰/熱)", p: 85, i: "20.jpg" },
+            { c: 3, n: "阿芙佳朵(冰)", p: 110, i: "21.jpg" }
         ];
 
         let cart = [];
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
 
         function render() {
-            items.forEach((item, idx) => {
-                const grid = document.getElementById(`grid-${item.c}`);
-                grid.innerHTML += `
-                    <div class="product-card">
-                        <img src="${item.i}" class="product-img" onerror="this.src='https://via.placeholder.com/300x200?text=Butter+Roo'">
-                        <div class="product-info">
-                            <div class="product-name">${item.n}</div>
-                            <div class="price">NT$ ${item.p}</div>
-                            <div class="qty-box">
-                                <button class="qty-btn" onclick="changeQty(${idx},-1)">-</button>
-                                <span id="q-${idx}" style="font-weight:bold">1</span>
-                                <button class="qty-btn" onclick="changeQty(${idx},1)">+</button>
+            data.forEach((d, idx) => {
+                const g = document.getElementById('g' + d.c);
+                if(g) {
+                    g.innerHTML += `
+                        <div class="card">
+                            <img src="${d.i}" class="img" onerror="this.src='https://via.placeholder.com/200x150?text=ButterRoo'">
+                            <div class="info">
+                                <div class="name">${d.n}</div>
+                                <div class="price">$${d.p}</div>
+                                <button class="btn" onclick="add(${idx})">加入清單</button>
                             </div>
-                            <button class="add-btn" onclick="add(${idx})">加入預訂</button>
-                        </div>
-                    </div>`;
+                        </div>`;
+                }
             });
         }
 
-        function changeQty(idx, d) {
-            let q = document.getElementById(`q-${idx}`);
-            let v = parseInt(q.innerText) + d;
-            if(v >= 1) q.innerText = v;
-        }
-
         function add(idx) {
-            let qty = parseInt(document.getElementById(`q-${idx}`).innerText);
-            let item = items[idx];
-            let exist = cart.find(x => x.n === item.n);
-            if(exist) exist.q += qty;
-            else cart.push({ n: item.n, p: item.p, q: qty });
-            updateCart();
+            const item = data[idx];
+            const has = cart.find(x => x.n === item.n);
+            if(has) has.q++;
+            else cart.push({ n: item.n, p: item.p, q: 1 });
+            update();
         }
 
-        function updateCart() {
-            const disp = document.getElementById('cart-display');
-            if(cart.length === 0) { disp.innerHTML = "尚未選擇品項"; return; }
-            disp.innerHTML = cart.map((x, i) => `
-                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;">
+        function update() {
+            const l = document.getElementById('cart-list');
+            const t = document.getElementById('total');
+            if(cart.length === 0) { l.innerHTML = "尚未選擇。"; t.innerText = "0"; return; }
+            l.innerHTML = cart.map((x, i) => `
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
                     <span>${x.n} x ${x.q}</span>
-                    <span>$${x.p * x.q} <i class="fas fa-trash" style="color:#ddd; cursor:pointer;" onclick="remove(${i})"></i></span>
-                </div>
-            `).join('');
-            document.getElementById('total-price').innerText = cart.reduce((s, x) => s + (x.p * x.q), 0);
+                    <span>$${x.p * x.q} <i class="fas fa-trash" onclick="rem(${i})" style="color:#ccc;cursor:pointer;"></i></span>
+                </div>`).join('');
+            t.innerText = cart.reduce((s, x) => s + (x.p * x.q), 0);
         }
 
-        function remove(i) { cart.splice(i,1); updateCart(); }
+        function rem(i) { cart.splice(i, 1); update(); }
 
-        function sendOrder() {
-            let name = document.getElementById('user-name').value;
-            let phone = document.getElementById('user-phone').value;
-            if(cart.length === 0 || !name || !phone) return alert("請確認清單與聯絡資料已填寫");
-            let msg = `【Butter Roo 預訂】\n姓名：${name}\n電話：${phone}\n\n`;
-            cart.forEach(x => msg += `▪️ ${x.n} x ${x.q}\n`);
-            msg += `\n總計：NT$ ${document.getElementById('total-price').innerText}`;
-            window.location.href = `https://line.me/R/oaMessage/@069pytqk/?${encodeURIComponent(msg)}`;
+        function send() {
+            const u = document.getElementById('user').value;
+            const p = document.getElementById('tel').value;
+            if(!u || !p || cart.length === 0) return alert("請填寫姓名、電話並選擇品項");
+            let m = `【Butter Roo 預訂】\n姓名：${u}\n電話：${p}\n\n`;
+            cart.forEach(x => m += `▪️ ${x.n} x ${x.q}\n`);
+            m += `\n總計：NT$ ${document.getElementById('total').innerText}`;
+            window.location.href = `https://line.me/R/oaMessage/@069pytqk/?${encodeURIComponent(m)}`;
         }
-        render();
+
+        window.onload = render;
     </script>
 </body>
 </html>
