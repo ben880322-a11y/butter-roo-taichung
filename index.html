@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Butter Roo | 奶油袋鼠漢口店訂餐系統</title>
+    <title>Butter Roo | 奶油袋鼠訂餐系統</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -11,247 +11,27 @@
         body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; }
         nav { position: fixed; top: 0; width: 100%; height: 60px; background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 1000; box-sizing: border-box; }
         .logo { font-weight: bold; color: var(--s); font-size: 1.2rem; }
-        .admin-toggle { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; }
+        .admin-toggle { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
         .hero { height: 150px; background: var(--p); color: white; display: flex; align-items: center; justify-content: center; margin-top: 60px; text-align: center; }
         .container { max-width: 1000px; margin: auto; padding: 20px; }
+        
+        /* 前台商品網格 */
         .title { border-left: 5px solid var(--p); padding-left: 10px; margin: 30px 0 20px; color: var(--s); }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-        .card { background: white; border-radius: 10px; overflow: hidden; border: 1px solid #eee; display: flex; flex-direction: column; }
+        .card { background: white; border-radius: 10px; overflow: hidden; border: 1px solid #eee; display: flex; flex-direction: column; text-align: center; }
         .img { width: 100%; height: 150px; object-fit: cover; background: #eee; }
-        .info { padding: 10px; text-align: center; flex-grow: 1; }
-        .name { font-weight: bold; font-size: 1rem; margin-bottom: 5px; min-height: 2.5em; }
-        .price { color: var(--s); font-weight: bold; margin-bottom: 10px; }
-        .btn { background: var(--p); color: white; border: none; padding: 8px; width: 100%; border-radius: 5px; cursor: pointer; }
-        .cart { background: white; padding: 20px; border-radius: 10px; margin-top: 40px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .input { width: 100%; padding: 12px; margin: 5px 0 15px 0; box-sizing: border-box; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; }
-        .line-btn { background: #06C755; color: white; border: none; width: 100%; padding: 15px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1.1rem; }
+        .info { padding: 10px; flex-grow: 1; }
+        .price { color: var(--s); font-weight: bold; margin: 10px 0; }
+        .qty-ctrl { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .qty-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ddd; background: white; cursor: pointer; }
+        .btn { background: var(--p); color: white; border: none; padding: 8px; width: 100%; border-radius: 5px; cursor: pointer; font-weight: bold; }
         
-        /* 後台專用樣式 */
-        .admin-panel { background: white; padding: 30px; border-radius: 10px; margin-top: 20px; box-shadow: 0 0 15px rgba(0,0,0,0.1); border-top: 5px solid #333; }
-        .time-slot-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .time-slot-row input { width: 80px; padding: 5px; text-align: center; }
-        .save-btn { background: #333; color: white; border: none; padding: 12px; width: 100%; border-radius: 5px; cursor: pointer; margin-top: 20px; font-size: 1.1rem; }
+        /* 表單與購物車 */
+        .cart { background: white; padding: 20px; border-radius: 10px; margin-top: 40px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .input { width: 100%; padding: 12px; margin: 5px 0 15px 0; box-sizing: border-box; border: 1px solid #ddd; border-radius: 5px; }
+        .line-btn { background: #06C755; color: white; border: none; width: 100%; padding: 15px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.1rem; }
+        
+        /* 後台樣式 */
         .hidden { display: none !important; }
-    </style>
-</head>
-<body>
-
-    <nav>
-        <div class="logo">BUTTER ROO</div>
-        <button class="admin-toggle" id="mode-btn" onclick="toggleMode()">切換至店長後台</button>
-    </nav>
-
-    <div id="customer-view">
-        <div class="hero">
-            <div><h2 style="margin:0;">奶油袋鼠 漢口店</h2><p style="margin:5px 0 0;">21款現烤美味．線上預訂</p></div>
-        </div>
-
-        <div class="container">
-            <h3 class="title">人氣泡芙系列</h3>
-            <div class="grid" id="g1"></div>
-
-            <h3 class="title">精緻甜點與可頌</h3>
-            <div class="grid" id="g2"></div>
-
-            <h3 class="title">咖啡系列</h3>
-            <div class="grid" id="g3"></div>
-
-            <div class="cart" id="cart">
-                <h3><i class="fas fa-shopping-basket"></i> 預訂清單</h3>
-                <div id="cart-list" style="margin-bottom: 15px;">尚未選擇。</div>
-                <p style="text-align:right; font-size:1.2rem; font-weight:bold; color:var(--s);">總計: NT$ <span id="total">0</span></p>
-                <p style="text-align:right; font-size:0.9rem; color:#666;">總數量: <span id="total-qty">0</span> 份</p>
-                
-                <hr style="border: 0; border-top: 1px dashed #ddd; margin: 20px 0;">
-                
-                <label style="font-weight:bold;">選擇取餐時段：</label>
-                <select id="time-select" class="input"></select>
-
-                <input type="text" id="user" class="input" placeholder="您的姓名">
-                <input type="tel" id="tel" class="input" placeholder="您的電話">
-                <button class="line-btn" onclick="sendOrder()">確認預訂並送出</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="admin-view" class="container hidden" style="margin-top: 80px;">
-        <h2 style="color: #333;"><i class="fas fa-cog"></i> 庫存與時段管理系統</h2>
-        <div class="admin-panel">
-            <p style="color: #666;">請設定每個時段「最多可接單的泡芙/甜點總數」。設為 0 代表該時段額滿不開放。</p>
-            <div id="admin-time-slots"></div>
-            <button class="save-btn" onclick="saveAdminSettings()">儲存設定</button>
-        </div>
-    </div>
-
-    <script>
-        // 產品資料
-        const data = [
-            { c: 1, n: "生乳卡士達", p: 60, i: "1.jpg" }, { c: 1, n: "草莓卡士達", p: 95, i: "2.jpg" }, { c: 1, n: "法芙娜可可", p: 70, i: "3.jpg" }, { c: 1, n: "白葡萄卡士達", p: 90, i: "4.jpg" }, { c: 1, n: "靜岡濃抹茶", p: 75, i: "5.jpg" }, { c: 1, n: "砂糖橘卡士達", p: 85, i: "6.jpg" }, { c: 1, n: "提拉米蘇", p: 120, i: "7.jpg" }, { c: 1, n: "雲朵山竹", p: 110, i: "8.jpg" }, { c: 1, n: "重乳酪炙燒起司", p: 100, i: "9.jpg" }, { c: 1, n: "貓山王榴槤", p: 120, i: "10.jpg" }, { c: 1, n: "酸甜檸檬乳酪", p: 95, i: "11.jpg" }, { c: 1, n: "酪梨尬布丁", p: 90, i: "12.jpg" }, { c: 1, n: "肉鬆鹹蛋黃乳酪", p: 90, i: "13.jpg" }, { c: 1, n: "酸溜溜檸檬", p: 85, i: "14.jpg" }, { c: 2, n: "mini小泡芙招牌波羅", p: 150, i: "15.jpg" }, { c: 2, n: "mini小泡芙經典日式", p: 140, i: "16.jpg" }, { c: 2, n: "蜜糖可頌", p: 55, i: "17.jpg" }, { c: 2, n: "蛋塔可頌", p: 65, i: "18.jpg" }, { c: 3, n: "美式咖啡(冰/熱)", p: 65, i: "19.jpg" }, { c: 3, n: "拿鐵咖啡(冰/熱)", p: 85, i: "20.jpg" }, { c: 3, n: "阿芙佳朵(冰)", p: 110, i: "21.jpg" }
-        ];
-
-        // 模擬資料庫：各時段的「可供應總數量」
-        let timeSlots = {
-            "13:00 - 14:00": 30, // 該時段可賣30個
-            "14:00 - 15:00": 10,
-            "15:00 - 16:00": 0,  // 0 代表已滿單
-            "16:00 - 17:00": 20,
-            "17:00 - 18:00": 30,
-            "18:00 - 19:00": 15
-        };
-
-        let cart = [];
-        let isAdmin = false;
-
-        // 初始化前台商品
-        function renderProducts() {
-            data.forEach((d, idx) => {
-                const g = document.getElementById('g' + d.c);
-                if(g) {
-                    g.innerHTML += `
-                        <div class="card">
-                            <img src="${d.i}" class="img" onerror="this.src='https://via.placeholder.com/200x150?text=ButterRoo'">
-                            <div class="info">
-                                <div class="name">${d.n}</div>
-                                <div class="price">$${d.p}</div>
-                                <button class="btn" onclick="add(${idx})">加入清單</button>
-                            </div>
-                        </div>`;
-                }
-            });
-        }
-
-        // 購物車邏輯
-        function add(idx) {
-            const item = data[idx];
-            const has = cart.find(x => x.n === item.n);
-            if(has) has.q++;
-            else cart.push({ n: item.n, p: item.p, q: 1 });
-            updateCart();
-        }
-
-        function updateCart() {
-            const l = document.getElementById('cart-list');
-            const t = document.getElementById('total');
-            const qtyDisp = document.getElementById('total-qty');
-            
-            if(cart.length === 0) { l.innerHTML = "尚未選擇。"; t.innerText = "0"; qtyDisp.innerText = "0"; return; }
-            
-            l.innerHTML = cart.map((x, i) => `
-                <div style="display:flex; justify-content:space-between; margin-bottom:5px; align-items:center;">
-                    <span>${x.n}</span>
-                    <div>
-                        <span style="color:#e65100; font-weight:bold; margin-right:10px;">x ${x.q}</span>
-                        <span>$${x.p * x.q} <i class="fas fa-trash" onclick="rem(${i})" style="color:#ccc;cursor:pointer;margin-left:5px;"></i></span>
-                    </div>
-                </div>`).join('');
-                
-            t.innerText = cart.reduce((s, x) => s + (x.p * x.q), 0);
-            qtyDisp.innerText = getCartTotalQty();
-        }
-
-        function getCartTotalQty() {
-            return cart.reduce((sum, item) => sum + item.q, 0);
-        }
-
-        function rem(i) { cart.splice(i, 1); updateCart(); }
-
-        // 更新前台時段下拉選單
-        function updateTimeDropdown() {
-            const select = document.getElementById('time-select');
-            select.innerHTML = '<option value="">請選擇取餐時間...</option>';
-            
-            for (let time in timeSlots) {
-                let limit = timeSlots[time];
-                if (limit <= 0) {
-                    select.innerHTML += `<option value="${time}" disabled>${time} (額滿 / 無法預約)</option>`;
-                } else {
-                    select.innerHTML += `<option value="${time}">${time} (剩餘名額: ${limit})</option>`;
-                }
-            }
-        }
-
-        // 送出訂單與庫存檢查
-        function sendOrder() {
-            const u = document.getElementById('user').value;
-            const p = document.getElementById('tel').value;
-            const selectedTime = document.getElementById('time-select').value;
-            const totalQty = getCartTotalQty();
-
-            if(cart.length === 0) return alert("購物車是空的喔！");
-            if(!selectedTime) return alert("請選擇取餐時段！");
-            if(!u || !p) return alert("請填寫姓名與電話！");
-
-            // 核心邏輯：檢查該時段剩餘數量是否足夠
-            if (totalQty > timeSlots[selectedTime]) {
-                alert(`抱歉！${selectedTime} 時段只剩下 ${timeSlots[selectedTime]} 個可供預訂，請減少數量或選擇其他時段。`);
-                return;
-            }
-
-            // 模擬扣除庫存 (真實情況需透過後端資料庫處理)
-            timeSlots[selectedTime] -= totalQty;
-            
-            let m = `【Butter Roo 預訂】\n👤 姓名：${u}\n📞 電話：${p}\n🕒 取餐時間：${selectedTime}\n\n`;
-            cart.forEach(x => m += `▪️ ${x.n} x ${x.q}\n`);
-            m += `\n💰 總計：NT$ ${document.getElementById('total').innerText}`;
-            
-            alert("訂單送出成功！即將跳轉至 LINE...");
-            window.location.href = `https://line.me/R/oaMessage/@069pytqk/?${encodeURIComponent(m)}`;
-            
-            // 送出後清空購物車並更新畫面
-            cart = [];
-            document.getElementById('user').value = "";
-            document.getElementById('tel').value = "";
-            updateCart();
-            updateTimeDropdown();
-        }
-
-        // ================= 後台邏輯 =================
-
-        function toggleMode() {
-            isAdmin = !isAdmin;
-            document.getElementById('customer-view').classList.toggle('hidden', isAdmin);
-            document.getElementById('admin-view').classList.toggle('hidden', !isAdmin);
-            
-            const btn = document.getElementById('mode-btn');
-            if(isAdmin) {
-                btn.innerText = "返回前台";
-                btn.style.background = "#FFB74D";
-                renderAdminPanel();
-            } else {
-                btn.innerText = "切換至店長後台";
-                btn.style.background = "#333";
-                updateTimeDropdown(); // 切換回前台時，更新客人看到的下拉選單
-            }
-        }
-
-        function renderAdminPanel() {
-            const container = document.getElementById('admin-time-slots');
-            container.innerHTML = '';
-            for (let time in timeSlots) {
-                container.innerHTML += `
-                    <div class="time-slot-row">
-                        <span style="font-weight:bold; font-size:1.1rem;">${time}</span>
-                        <div>
-                            可接單數量： <input type="number" id="input-${time}" value="${timeSlots[time]}" min="0"> 份
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        function saveAdminSettings() {
-            for (let time in timeSlots) {
-                const newVal = document.getElementById(`input-${time}`).value;
-                timeSlots[time] = parseInt(newVal) || 0;
-            }
-            alert("✅ 時段數量設定已儲存！請返回前台測試。");
-        }
-
-        // 初始化執行
-        window.onload = () => {
-            renderProducts();
-            updateTimeDropdown();
-        };
-    </script>
-</body>
-</html>
+        .admin-nav { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 10px; }
+        .admin-tab { background: #eee; border
