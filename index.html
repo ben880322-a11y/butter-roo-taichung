@@ -22,17 +22,22 @@
         
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
         .card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid #f0f0f0; display: flex; flex-direction: column; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
-        .card.gift-card { border: 2px solid var(--p); box-shadow: 0 5px 15px rgba(255, 183, 77, 0.3); } /* 禮盒專屬高亮邊框 */
+        .card.gift-card { border: 2px solid var(--p); box-shadow: 0 5px 15px rgba(255, 183, 77, 0.3); }
         
         .img { width: 100%; height: 160px; object-fit: cover; background: #fafafa; }
         .info { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
         
-        .action-row { display: flex; gap: 10px; margin-top: auto; }
-        .qty-input { width: 60px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; text-align: center; font-size: 1rem; box-sizing: border-box; }
-        .add-btn { flex-grow: 1; background: var(--p); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; transition: 0.2s; }
+        .action-row { display: flex; gap: 10px; margin-top: auto; align-items: center; }
+        
+        /* 全新加減按鈕樣式 */
+        .qty-ctrl { display: flex; align-items: center; justify-content: space-between; background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; height: 42px; width: 110px; }
+        .qty-btn { background: none; border: none; width: 35px; height: 100%; cursor: pointer; font-size: 1.2rem; font-weight: bold; color: #555; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .qty-btn:hover { background: #eee; color: var(--s); }
+        .qty-num { font-size: 1.1rem; font-weight: bold; width: 40px; text-align: center; color: #333; }
+        
+        .add-btn { flex-grow: 1; background: var(--p); color: white; border: none; height: 42px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .add-btn:hover { background: var(--s); }
         
-        /* 禮盒口味下拉選單 */
         .box-select { width: 100%; padding: 8px; margin-bottom: 6px; border: 1px solid #ddd; border-radius: 5px; font-size: 0.95rem; background: #fff; color: #333; }
         
         .cart { background: white; padding: 25px; border-radius: 15px; margin-top: 50px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); border-top: 6px solid var(--p); }
@@ -105,13 +110,13 @@
     </div>
 
     <div class="footer">
-        系統版本：20260312_V2 &copy; Butter Roo 奶油袋鼠漢口店
+        系統版本：20260312_V3 &copy; Butter Roo 奶油袋鼠漢口店
     </div>
 
     <script>
         // --- 1. 資料庫區域 ---
         
-        // 禮盒設定 (您可在此更改價格)
+        // 禮盒設定
         const giftBoxes = [
             { id: 'box4', name: '四入精緻禮盒', size: 4, price: 320, img: 'https://via.placeholder.com/300x200/FFB74D/ffffff?text=4+Pack+Gift+Box' },
             { id: 'box6', name: '六入豪華禮盒', size: 6, price: 480, img: 'https://via.placeholder.com/300x200/E65100/ffffff?text=6+Pack+Gift+Box' }
@@ -126,11 +131,22 @@
 
         let cart = [];
 
+        // --- 數字加減控制邏輯 ---
+        function changeQty(elementId, delta) {
+            let el = document.getElementById(elementId);
+            let currentVal = parseInt(el.innerText);
+            let newVal = currentVal + delta;
+            
+            // 防呆：最低數量就是 1，不允許減到 0 或負數
+            if (newVal >= 1) {
+                el.innerText = newVal;
+            }
+        }
+
         // --- 2. 渲染邏輯 ---
 
         // 渲染禮盒專區
         function renderGiftBoxes() {
-            // 自動篩選出屬於「泡芙」(c: 1) 的商品，作為禮盒選項
             const puffs = products.filter(p => p.c === 1);
             let puffOptions = puffs.map(p => `<option value="${p.n}">${p.n}</option>`).join('');
             
@@ -139,7 +155,6 @@
             
             giftBoxes.forEach(box => {
                 let selectsHtml = '';
-                // 根據禮盒大小(size)，產生對應數量的下拉選單
                 for(let i = 1; i <= box.size; i++) {
                     selectsHtml += `<select id="${box.id}-flavor-${i}" class="box-select">
                         <option value="" disabled selected>👉 選擇第 ${i} 顆口味</option>
@@ -160,8 +175,12 @@
                         </div>
 
                         <div class="action-row">
-                            <input type="number" id="${box.id}-qty" class="qty-input" value="1" min="1">
-                            <button class="add-btn" onclick="addBoxToCart('${box.id}')"><i class="fas fa-gift"></i> 加入訂單</button>
+                            <div class="qty-ctrl">
+                                <button class="qty-btn" onclick="changeQty('${box.id}-qty', -1)">-</button>
+                                <div class="qty-num" id="${box.id}-qty">1</div>
+                                <button class="qty-btn" onclick="changeQty('${box.id}-qty', 1)">+</button>
+                            </div>
+                            <button class="add-btn" onclick="addBoxToCart('${box.id}')"><i class="fas fa-gift"></i> 加入</button>
                         </div>
                     </div>
                 </div>`;
@@ -180,9 +199,14 @@
                             <div class="info">
                                 <div style="font-weight:bold; font-size:1.1rem; margin-bottom:5px;">${d.n}</div>
                                 <div style="color:var(--s); font-weight:bold; font-size:1.1rem; margin-bottom:15px;">NT$ ${d.p}</div>
+                                
                                 <div class="action-row">
-                                    <input type="number" id="qty-${idx}" class="qty-input" value="1" min="1">
-                                    <button class="add-btn" onclick="addToCart(${idx})">加入訂單</button>
+                                    <div class="qty-ctrl">
+                                        <button class="qty-btn" onclick="changeQty('qty-${idx}', -1)">-</button>
+                                        <div class="qty-num" id="qty-${idx}">1</div>
+                                        <button class="qty-btn" onclick="changeQty('qty-${idx}', 1)">+</button>
+                                    </div>
+                                    <button class="add-btn" onclick="addToCart(${idx})">加入</button>
                                 </div>
                             </div>
                         </div>`;
@@ -192,30 +216,26 @@
 
         // --- 3. 購物車邏輯 ---
 
-        // 將禮盒加入購物車
         function addBoxToCart(boxId) {
             const box = giftBoxes.find(b => b.id === boxId);
             let flavors = [];
             
-            // 檢查是否每顆都有選到口味
             for(let i = 1; i <= box.size; i++) {
                 let val = document.getElementById(`${box.id}-flavor-${i}`).value;
                 if(!val) {
-                    alert(`請完整選擇 ${box.name} 的 ${box.size} 顆口味喔！ (您還有漏選的)`);
+                    alert(`請完整選擇 ${box.name} 的 ${box.size} 顆口味喔！`);
                     return;
                 }
                 flavors.push(val);
             }
             
-            let qty = parseInt(document.getElementById(`${box.id}-qty`).value);
-            if(isNaN(qty) || qty < 1) qty = 1;
+            // 從畫面上的數字抓取數量
+            let qty = parseInt(document.getElementById(`${box.id}-qty`).innerText);
 
-            // 統計口味數量 (把 生乳, 生乳, 草莓 變成 -> 生乳x2, 草莓x1)
             let flavorCounts = {};
             flavors.forEach(f => flavorCounts[f] = (flavorCounts[f] || 0) + 1);
             let detailStr = Object.keys(flavorCounts).map(k => `${k}x${flavorCounts[k]}`).join(', ');
 
-            // 產生專屬的購物車名稱
             let cartName = `🎁 ${box.name} (${detailStr})`;
 
             const existingItem = cart.find(x => x.n === cartName);
@@ -227,19 +247,18 @@
             
             updateCartDisplay();
             
-            // 重置數量與選項
-            document.getElementById(`${box.id}-qty`).value = 1;
+            // 重置數量顯示為 1，並清除選單
+            document.getElementById(`${box.id}-qty`).innerText = 1;
             for(let i = 1; i <= box.size; i++) {
                 document.getElementById(`${box.id}-flavor-${i}`).selectedIndex = 0;
             }
             alert(`已將 ${box.name} 加入清單！`);
         }
 
-        // 將單點加入購物車
         function addToCart(idx) {
             const item = products[idx];
-            let inputQty = parseInt(document.getElementById(`qty-${idx}`).value);
-            if (isNaN(inputQty) || inputQty < 1) inputQty = 1;
+            // 從畫面上的數字抓取數量
+            let inputQty = parseInt(document.getElementById(`qty-${idx}`).innerText);
 
             const existingItem = cart.find(x => x.n === item.n);
             if(existingItem) {
@@ -249,7 +268,9 @@
             }
             
             updateCartDisplay();
-            document.getElementById(`qty-${idx}`).value = 1; 
+            
+            // 重置數量顯示為 1
+            document.getElementById(`qty-${idx}`).innerText = 1; 
         }
 
         function updateCartDisplay() {
@@ -308,8 +329,8 @@
 
         // 確保網頁載入後才執行設定
         window.onload = () => {
-            renderGiftBoxes(); // 先渲染禮盒
-            renderProducts();  // 再渲染單點
+            renderGiftBoxes();
+            renderProducts();
             
             // 安全地設定今日日期
             const todayStr = new Date().toISOString().split('T')[0];
