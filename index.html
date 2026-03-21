@@ -61,7 +61,7 @@
         <h2 class="section-header"><i class="fas fa-gift"></i> 禮盒專區</h2>
         <div class="grid" id="g-boxes" style="margin-bottom: 50px;"></div>
 
-        <h2 class="section-header"><i class="fas fa-croissant"></i> 🥐 單點專區</h2>
+        <h2 class="section-header"><i class="fas fa-bread-slice"></i> 單點專區</h2>
         
         <h3 class="title">人氣泡芙系列</h3><div class="grid" id="g1"></div>
         <h3 class="title">精緻甜點與可頌</h3><div class="grid" id="g2"></div>
@@ -117,7 +117,7 @@
             { id: 'box6', name: '六入豪華禮盒', size: 6, price: 480, img: 'https://via.placeholder.com/300x200/E65100/ffffff?text=6+Pack+Gift+Box' }
         ];
 
-        // 單點商品設定
+        // 單點商品設定 (完整的 21 項)
         const products = [
             { c: 1, n: "生乳卡士達", p: 60, i: "1.jpg" }, { c: 1, n: "草莓卡士達", p: 95, i: "2.jpg" }, { c: 1, n: "法芙娜可可", p: 70, i: "3.jpg" }, { c: 1, n: "白葡萄卡士達", p: 90, i: "4.jpg" }, { c: 1, n: "靜岡濃抹茶", p: 75, i: "5.jpg" }, { c: 1, n: "砂糖橘卡士達", p: 85, i: "6.jpg" }, { c: 1, n: "酪梨尬布丁", p: 90, i: "7.jpg" }, { c: 1, n: "mini小泡芙 (招牌)", p: 150, i: "8.jpg" }, { c: 1, n: "mini小泡芙 (日式)", p: 140, i: "9.jpg" },
             { c: 2, n: "提拉米蘇", p: 120, i: "10.jpg" }, { c: 2, n: "雲朵山竹", p: 110, i: "11.jpg" }, { c: 2, n: "重乳酪炙燒起司", p: 100, i: "12.jpg" }, { c: 2, n: "貓山王榴槤", p: 120, i: "13.jpg" }, { c: 2, n: "酸甜檸檬乳酪", p: 95, i: "14.jpg" }, { c: 2, n: "肉鬆鹹蛋黃乳酪", p: 90, i: "15.jpg" }, { c: 2, n: "酸溜溜檸檬", p: 85, i: "16.jpg" }, { c: 2, n: "蜜糖可頌", p: 55, i: "17.jpg" }, { c: 2, n: "蛋塔可頌", p: 65, i: "18.jpg" },
@@ -281,14 +281,26 @@
             const name = document.getElementById('user').value.trim();
             const phone = document.getElementById('tel').value.trim();
             
-            if (cart.length === 0) return alert("請先選購商品再送出訂單喔！");
-            if (!date || !time) return alert("請選擇取餐日期與時段。");
+            if (cart.length === 0) {
+                alert("請先選購商品再送出訂單喔！");
+                return;
+            }
+
+            if (!date || !time) {
+                alert("請選擇取餐日期與時段。");
+                return;
+            }
 
             const phoneRegex = /^[0-9]{10}$/;
-            if (!name || !phoneRegex.test(phone)) return alert("請填入完整聯絡資訊 (包含10碼電話數字)");
+            if (!name || !phoneRegex.test(phone)) {
+                alert("請填入完整聯絡資訊 (包含10碼電話數字)");
+                return;
+            }
 
             let msg = `【Butter Roo 預訂訂單】\n👤 姓名：${name}\n📞 電話：${phone}\n📅 取餐：${date} (${time})\n\n-- 訂購明細 --\n`;
-            cart.forEach(x => { msg += `▪️ ${x.n} x ${x.q}\n`; });
+            cart.forEach(x => {
+                msg += `▪️ ${x.n} x ${x.q}\n`;
+            });
             msg += `\n💰 總金額：NT$ ${document.getElementById('total').innerText}\n\n(請確認是否有現貨並回覆)`;
             
             window.location.href = `https://line.me/R/oaMessage/@069pytqk/?${encodeURIComponent(msg)}`;
