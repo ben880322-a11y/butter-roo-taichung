@@ -3,35 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Butter Roo | 奶油袋鼠訂餐系統</title>
+    <title>Butter Roo | 奶油袋鼠點餐系統</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --p: #FFB74D; --s: #E65100; --bg: #FFFBF5; }
         body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; }
-        nav { position: fixed; top: 0; width: 100%; height: 60px; background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 1000; box-sizing: border-box; }
-        .logo { font-weight: bold; color: var(--s); font-size: 1.2rem; }
-        .admin-toggle { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
-        .hero { height: 150px; background: var(--p); color: white; display: flex; align-items: center; justify-content: center; margin-top: 60px; text-align: center; }
+        nav { position: fixed; top: 0; width: 100%; height: 60px; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 1000; }
+        .logo { font-weight: bold; color: var(--s); font-size: 1.4rem; letter-spacing: 2px; }
+        
+        .hero { height: 160px; background: var(--p); color: white; display: flex; align-items: center; justify-content: center; margin-top: 60px; text-align: center; }
         .container { max-width: 1000px; margin: auto; padding: 20px; }
         
-        /* 前台商品網格 */
-        .title { border-left: 5px solid var(--p); padding-left: 10px; margin: 30px 0 20px; color: var(--s); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-        .card { background: white; border-radius: 10px; overflow: hidden; border: 1px solid #eee; display: flex; flex-direction: column; text-align: center; }
-        .img { width: 100%; height: 150px; object-fit: cover; background: #eee; }
-        .info { padding: 10px; flex-grow: 1; }
-        .price { color: var(--s); font-weight: bold; margin: 10px 0; }
-        .qty-ctrl { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .qty-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ddd; background: white; cursor: pointer; }
-        .btn { background: var(--p); color: white; border: none; padding: 8px; width: 100%; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .title { border-left: 5px solid var(--p); padding-left: 10px; margin: 40px 0 20px; color: var(--s); font-size: 1.5rem;}
         
-        /* 表單與購物車 */
-        .cart { background: white; padding: 20px; border-radius: 10px; margin-top: 40px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .input { width: 100%; padding: 12px; margin: 5px 0 15px 0; box-sizing: border-box; border: 1px solid #ddd; border-radius: 5px; }
-        .line-btn { background: #06C755; color: white; border: none; width: 100%; padding: 15px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.1rem; }
+        /* 商品卡片與操作區 */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid #f0f0f0; display: flex; flex-direction: column; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .img { width: 100%; height: 160px; object-fit: cover; background: #fafafa; }
+        .info { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
+        .name { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; }
+        .price { color: var(--s); font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; }
         
-        /* 後台樣式 */
-        .hidden { display: none !important; }
-        .admin-nav { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 10px; }
-        .admin-tab { background: #eee; border
+        /* 數量框與加入按鈕並排 */
+        .action-row { display: flex; gap: 10px; margin-top: auto; }
+        .qty-input { width: 60px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; text-align: center; font-size: 1rem; box-sizing: border-box; }
+        .add-btn { flex-grow: 1; background: var(--p); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; transition: 0.2s; }
+        .add-btn:hover { background: var(--s); }
+        
+        /* 結帳區 */
+        .cart { background: white; padding: 25px; border-radius: 15px; margin-top: 50px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); border-top: 6px solid var(--p); }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #eee; }
+        
+        .form-group { margin-top: 20px; }
+        .form-label { font-weight: bold; margin-bottom: 5px; display: block; color: #444; }
+        .input { width: 100%; padding: 14px; margin-bottom: 15px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
+        .line-btn { background: #06C755; color: white; border: none; width: 100%; padding: 18px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1.2rem; display: flex; justify-content: center; align-items: center; gap: 10px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">BUTTER ROO</div>
+    </nav>
+
+    <div class="hero">
+        <div>
+            <h1 style="margin:0; font-size: 2rem;">奶油袋鼠 漢口店</h1>
+            <p style="margin:10px 0 0; font-size: 1.1rem; letter-spacing: 1px;">DAILY FRESH BAKED PUFFS</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h3 class="title">人氣泡芙系列</h3><div class="grid" id="g1"></div>
+        <h3 class="title">精緻甜點與可頌</h3><div class="grid" id="g2"></div>
+        <h3 class="title">咖啡系列</h3><div class="grid" id="g3"></div>
+
+        <div class="cart" id="cart">
+            <h2 style="margin-top:0;"><i class="fas fa-shopping-basket"></i> 我的預訂清單</h2>
+            <div id="cart-list" style="margin-bottom: 20px; color: #888;">購物車目前是空的。</div>
+            <div style="text-align:right; font-size:1.6rem; font-weight:bold; color:var(--s); margin-bottom: 20px;">
+                總計 NT$ <span id="total">0</span>
+            </div>
+            
+            <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+            
+            <div class="form-group">
+                <label class="form-label">取餐日期：</label>
+                <input type="date" id="order-date" class="input">
+                
+                <label class="form-label">取餐時段：</label>
+                <select id="time-select" class="input">
+                    <option value="">請選擇時段...</option>
+                    <option value="13:00 - 14:00">13:00 - 14:00</option>
+                    <option value="14:00 - 15:00">14:00 - 15:00</option>
+                    <option value="15:00 - 16:00">15:00 - 16:00</option>
+                    <option value="16:00 - 17:00">16:00 - 17:00</option>
+                    <option value="17:00 - 18:00">17:00 - 18:00</option>
+                    <option value="18:00 - 19:00">18:00 - 19:00</option>
+                </select>
+
+                <label class="form-label">訂購人姓名：</label>
+                <input type="text" id="user" class="input" placeholder="請輸入姓名">
+                
+                <label class="form-label">聯絡電話 (10碼數字)：</label>
+                <input type="tel" id="tel" class="input" placeholder="例如：0912345678" maxlength="10">
+                
+                <button class="line-btn" onclick="submitOrder()">
+                    <i class="fab fa-line"></i> 送出訂單至 LINE
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 完整的 21 項商品資料
+        const products = [
+            { c: 1, n: "生乳卡士達", p: 60, i: "1.jpg" }, { c: 1, n: "草莓卡士達", p: 95, i: "2.jpg" }, { c: 1, n: "法芙娜可可", p: 70, i: "3.jpg" }, { c: 1, n: "白葡萄卡士達", p: 90, i: "4.jpg" }, { c: 1, n: "靜岡濃抹茶", p: 75, i: "5.jpg" }, { c: 1, n: "砂糖橘卡士達", p: 85, i: "6.jpg" }, { c: 1, n: "酪梨尬布丁", p: 90, i: "7.jpg" }, { c: 1, n: "mini小泡芙 (招牌)", p: 150, i: "8.jpg" }, { c: 1, n: "mini小泡芙 (日式)", p: 140, i: "9.jpg" },
+            { c: 2, n: "提拉米蘇", p: 120, i: "10.jpg" }, { c: 2, n: "雲朵山竹", p: 110, i: "11.jpg" }, { c: 2, n: "重乳酪炙燒起司", p: 100, i: "12.jpg" }, { c: 2, n: "貓山王榴槤", p: 120, i: "13.jpg" }, { c: 2, n: "酸甜檸檬乳酪", p: 95, i: "14.jpg" }, { c: 2, n: "肉鬆鹹蛋黃乳酪", p: 90, i: "15.jpg" }, { c: 2, n: "酸溜溜檸檬", p: 85, i: "16.jpg" }, { c: 2, n: "蜜糖可頌", p: 55, i: "17.jpg" }, { c: 2, n: "蛋塔可頌", p: 65, i: "18.jpg" },
+            { c: 3, n: "美式咖啡 (冰/熱)", p: 65, i: "19.jpg" }, { c: 3, n: "拿鐵咖啡 (冰/熱)", p: 85, i: "20.jpg" }, { c: 3, n: "阿芙佳朵 (冰)", p: 110, i: "21.jpg" }
+        ];
+
+        let cart = [];
+
+        // 初始化設定今日日期
+        const todayStr = new Date().toISOString().split('T')[0];
+        document.getElementById('order-date').value = todayStr;
+        document.getElementById('order-date').min = todayStr;
+
+        // 渲染商品列表
+        function renderProducts() {
+            products.forEach((d, idx) => {
+                const g = document.getElementById('g' + d.c);
+                if(g) {
+                    g.innerHTML += `
+                        <div class="card">
+                            <img src="${d.i}" class="img" onerror="this.src='https://via.placeholder.com/300x200?text=ButterRoo'">
+                            <div class="info">
+                                <div class="name">${d.n}</div>
+                                <div class="price">NT$ ${d.p}</div>
+                                <div class="action-row">
+                                    <input type="number" id="qty-${idx}" class="qty-input" value="1" min="1">
+                                    <button class="add-btn" onclick="addToCart(${idx})">加入訂單</button>
+                                </div>
+                            </div>
+                        </div>`;
+                }
+            });
+        }
+
+        // 加入購物車
+        function addToCart(idx) {
+            const item = products[idx];
+            // 抓取該輸入框的數量，確保至少為 1
+            let inputQty = parseInt(document.getElementById(`qty-${idx}`).value);
+            if (isNaN(inputQty) || inputQty < 1) inputQty = 1;
+
+            const existingItem = cart.find(x => x.n === item.n);
+            if(existingItem) {
+                existingItem.q += inputQty;
+            } else {
+                cart.push({ n: item.n, p: item.p, q: inputQty });
+            }
+            
+            updateCartDisplay();
+            // 加入後把該輸入框重置為 1，方便下次點擊
+            document.getElementById(`qty-${idx}`).value = 1; 
+        }
+
+        // 更新購物車畫面
+        function updateCartDisplay() {
+            const list = document.getElementById('cart-list');
+            if(cart.length === 0) { 
+                list.innerHTML = "<span style='color:#888;'>購物車目前是空的。</span>"; 
+                document.getElementById('total').innerText = "0"; 
+                return; 
+            }
+            
+            list.innerHTML = cart.map((x, i) => `
+                <div class="cart-item">
+                    <span style="font-size:1.1rem;">${x.n} <b style="color:var(--s); margin-left:10px;">x ${x.q}</b></span>
+                    <span style="font-weight:bold;">$${x.
