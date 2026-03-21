@@ -5,28 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Butter Roo | 奶油袋鼠訂餐系統</title>
     
-    <script>
-        window.onerror = function(msg, url, line) {
-            document.write('<div style="background:#ffebee; color:#c62828; padding:20px; font-size:1.2rem; font-weight:bold; text-align:center;">🚨 發生錯誤請截圖：<br>' + msg + '<br>行號：' + line + '</div>');
-        };
-    </script>
-
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --p: #FFB74D; --s: #E65100; --bg: #FFFBF5; }
-        body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; }
+        body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); margin: 0; padding-bottom: 20px; }
         nav { position: fixed; top: 0; width: 100%; height: 60px; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 1000; }
         .logo { font-weight: bold; color: var(--s); font-size: 1.4rem; letter-spacing: 2px; }
-        .version-badge { position: absolute; right: 10px; background: #333; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; }
         
         .hero { height: 160px; background: var(--p); color: white; display: flex; align-items: center; justify-content: center; margin-top: 60px; text-align: center; }
         .container { max-width: 1000px; margin: auto; padding: 20px; }
         
-        .title { border-left: 5px solid var(--p); padding-left: 10px; margin: 40px 0 20px; color: var(--s); font-size: 1.5rem;}
+        /* 區塊大標題 */
+        .section-header { color: var(--s); border-bottom: 3px solid var(--p); padding-bottom: 10px; margin: 40px 0 20px; font-size: 1.8rem; }
+        .title { border-left: 5px solid var(--p); padding-left: 10px; margin: 30px 0 20px; color: #555; font-size: 1.3rem;}
         
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
         .card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid #f0f0f0; display: flex; flex-direction: column; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .card.gift-card { border: 2px solid var(--p); box-shadow: 0 5px 15px rgba(255, 183, 77, 0.3); } /* 禮盒專屬高亮邊框 */
+        
         .img { width: 100%; height: 160px; object-fit: cover; background: #fafafa; }
         .info { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
         
@@ -35,17 +32,21 @@
         .add-btn { flex-grow: 1; background: var(--p); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; transition: 0.2s; }
         .add-btn:hover { background: var(--s); }
         
+        /* 禮盒口味下拉選單 */
+        .box-select { width: 100%; padding: 8px; margin-bottom: 6px; border: 1px solid #ddd; border-radius: 5px; font-size: 0.95rem; background: #fff; color: #333; }
+        
         .cart { background: white; padding: 25px; border-radius: 15px; margin-top: 50px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); border-top: 6px solid var(--p); }
         .input { width: 100%; padding: 14px; margin-bottom: 15px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
         .form-label { font-weight: bold; margin-bottom: 5px; display: block; color: #444; }
         .line-btn { background: #06C755; color: white; border: none; width: 100%; padding: 18px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1.2rem; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        
+        .footer { text-align: center; padding: 30px 20px; margin-top: 40px; color: #999; font-size: 0.9rem; border-top: 1px solid #eee; }
     </style>
 </head>
 <body>
 
     <nav>
         <div class="logo">BUTTER ROO</div>
-        <div class="version-badge">V8.0 排錯版</div>
     </nav>
 
     <div class="hero">
@@ -56,6 +57,12 @@
     </div>
 
     <div class="container">
+        
+        <h2 class="section-header"><i class="fas fa-gift"></i> 禮盒專區</h2>
+        <div class="grid" id="g-boxes" style="margin-bottom: 50px;"></div>
+
+        <h2 class="section-header"><i class="fas fa-croissant"></i> 🥐 單點專區</h2>
+        
         <h3 class="title">人氣泡芙系列</h3><div class="grid" id="g1"></div>
         <h3 class="title">精緻甜點與可頌</h3><div class="grid" id="g2"></div>
         <h3 class="title">咖啡系列</h3><div class="grid" id="g3"></div>
@@ -97,7 +104,20 @@
         </div>
     </div>
 
+    <div class="footer">
+        系統版本：20260312_V2 &copy; Butter Roo 奶油袋鼠漢口店
+    </div>
+
     <script>
+        // --- 1. 資料庫區域 ---
+        
+        // 禮盒設定 (您可在此更改價格)
+        const giftBoxes = [
+            { id: 'box4', name: '四入精緻禮盒', size: 4, price: 320, img: 'https://via.placeholder.com/300x200/FFB74D/ffffff?text=4+Pack+Gift+Box' },
+            { id: 'box6', name: '六入豪華禮盒', size: 6, price: 480, img: 'https://via.placeholder.com/300x200/E65100/ffffff?text=6+Pack+Gift+Box' }
+        ];
+
+        // 單點商品設定
         const products = [
             { c: 1, n: "生乳卡士達", p: 60, i: "1.jpg" }, { c: 1, n: "草莓卡士達", p: 95, i: "2.jpg" }, { c: 1, n: "法芙娜可可", p: 70, i: "3.jpg" }, { c: 1, n: "白葡萄卡士達", p: 90, i: "4.jpg" }, { c: 1, n: "靜岡濃抹茶", p: 75, i: "5.jpg" }, { c: 1, n: "砂糖橘卡士達", p: 85, i: "6.jpg" }, { c: 1, n: "酪梨尬布丁", p: 90, i: "7.jpg" }, { c: 1, n: "mini小泡芙 (招牌)", p: 150, i: "8.jpg" }, { c: 1, n: "mini小泡芙 (日式)", p: 140, i: "9.jpg" },
             { c: 2, n: "提拉米蘇", p: 120, i: "10.jpg" }, { c: 2, n: "雲朵山竹", p: 110, i: "11.jpg" }, { c: 2, n: "重乳酪炙燒起司", p: 100, i: "12.jpg" }, { c: 2, n: "貓山王榴槤", p: 120, i: "13.jpg" }, { c: 2, n: "酸甜檸檬乳酪", p: 95, i: "14.jpg" }, { c: 2, n: "肉鬆鹹蛋黃乳酪", p: 90, i: "15.jpg" }, { c: 2, n: "酸溜溜檸檬", p: 85, i: "16.jpg" }, { c: 2, n: "蜜糖可頌", p: 55, i: "17.jpg" }, { c: 2, n: "蛋塔可頌", p: 65, i: "18.jpg" },
@@ -106,6 +126,50 @@
 
         let cart = [];
 
+        // --- 2. 渲染邏輯 ---
+
+        // 渲染禮盒專區
+        function renderGiftBoxes() {
+            // 自動篩選出屬於「泡芙」(c: 1) 的商品，作為禮盒選項
+            const puffs = products.filter(p => p.c === 1);
+            let puffOptions = puffs.map(p => `<option value="${p.n}">${p.n}</option>`).join('');
+            
+            const container = document.getElementById('g-boxes');
+            let html = '';
+            
+            giftBoxes.forEach(box => {
+                let selectsHtml = '';
+                // 根據禮盒大小(size)，產生對應數量的下拉選單
+                for(let i = 1; i <= box.size; i++) {
+                    selectsHtml += `<select id="${box.id}-flavor-${i}" class="box-select">
+                        <option value="" disabled selected>👉 選擇第 ${i} 顆口味</option>
+                        ${puffOptions}
+                    </select>`;
+                }
+
+                html += `
+                <div class="card gift-card">
+                    <img src="${box.img}" class="img">
+                    <div class="info">
+                        <div style="font-weight:bold; font-size:1.3rem; margin-bottom:5px; color:var(--s);">${box.name}</div>
+                        <div style="font-weight:bold; font-size:1.1rem; margin-bottom:15px;">NT$ ${box.price}</div>
+                        
+                        <div style="background: #FFF3E0; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                            <div style="margin-bottom: 8px; font-size: 0.9rem; font-weight:bold; color: #E65100;">請挑選 ${box.size} 顆口味：</div>
+                            ${selectsHtml}
+                        </div>
+
+                        <div class="action-row">
+                            <input type="number" id="${box.id}-qty" class="qty-input" value="1" min="1">
+                            <button class="add-btn" onclick="addBoxToCart('${box.id}')"><i class="fas fa-gift"></i> 加入訂單</button>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // 渲染單點專區
         function renderProducts() {
             products.forEach((d, idx) => {
                 const g = document.getElementById('g' + d.c);
@@ -126,6 +190,52 @@
             });
         }
 
+        // --- 3. 購物車邏輯 ---
+
+        // 將禮盒加入購物車
+        function addBoxToCart(boxId) {
+            const box = giftBoxes.find(b => b.id === boxId);
+            let flavors = [];
+            
+            // 檢查是否每顆都有選到口味
+            for(let i = 1; i <= box.size; i++) {
+                let val = document.getElementById(`${box.id}-flavor-${i}`).value;
+                if(!val) {
+                    alert(`請完整選擇 ${box.name} 的 ${box.size} 顆口味喔！ (您還有漏選的)`);
+                    return;
+                }
+                flavors.push(val);
+            }
+            
+            let qty = parseInt(document.getElementById(`${box.id}-qty`).value);
+            if(isNaN(qty) || qty < 1) qty = 1;
+
+            // 統計口味數量 (把 生乳, 生乳, 草莓 變成 -> 生乳x2, 草莓x1)
+            let flavorCounts = {};
+            flavors.forEach(f => flavorCounts[f] = (flavorCounts[f] || 0) + 1);
+            let detailStr = Object.keys(flavorCounts).map(k => `${k}x${flavorCounts[k]}`).join(', ');
+
+            // 產生專屬的購物車名稱
+            let cartName = `🎁 ${box.name} (${detailStr})`;
+
+            const existingItem = cart.find(x => x.n === cartName);
+            if(existingItem) {
+                existingItem.q += qty;
+            } else {
+                cart.push({ n: cartName, p: box.price, q: qty });
+            }
+            
+            updateCartDisplay();
+            
+            // 重置數量與選項
+            document.getElementById(`${box.id}-qty`).value = 1;
+            for(let i = 1; i <= box.size; i++) {
+                document.getElementById(`${box.id}-flavor-${i}`).selectedIndex = 0;
+            }
+            alert(`已將 ${box.name} 加入清單！`);
+        }
+
+        // 將單點加入購物車
         function addToCart(idx) {
             const item = products[idx];
             let inputQty = parseInt(document.getElementById(`qty-${idx}`).value);
@@ -152,8 +262,8 @@
             
             list.innerHTML = cart.map((x, i) => `
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px dashed #eee;">
-                    <span style="font-size:1.1rem;">${x.n} <b style="color:var(--s); margin-left:10px;">x ${x.q}</b></span>
-                    <span style="font-weight:bold;">$${x.p * x.q} <i class="fas fa-trash-alt" onclick="removeItem(${i})" style="color:#ccc; cursor:pointer; margin-left:15px; font-size:1.2rem;"></i></span>
+                    <span style="font-size:1.1rem; flex-grow:1;">${x.n} <b style="color:var(--s); margin-left:10px; white-space:nowrap;">x ${x.q}</b></span>
+                    <span style="font-weight:bold; white-space:nowrap; margin-left:15px;">$${x.p * x.q} <i class="fas fa-trash-alt" onclick="removeItem(${i})" style="color:#ccc; cursor:pointer; margin-left:10px; font-size:1.2rem;"></i></span>
                 </div>`).join('');
                 
             document.getElementById('total').innerText = cart.reduce((sum, x) => sum + (x.p * x.q), 0);
@@ -164,6 +274,7 @@
             updateCartDisplay();
         }
 
+        // --- 4. 送出訂單邏輯 ---
         function submitOrder() {
             const date = document.getElementById('order-date').value;
             const time = document.getElementById('time-select').value;
@@ -183,11 +294,19 @@
             window.location.href = `https://line.me/R/oaMessage/@069pytqk/?${encodeURIComponent(msg)}`;
         }
 
-        // 立即執行，不等待其他資源！
-        renderProducts();
-        const todayStr = new Date().toISOString().split('T')[0];
-        document.getElementById('order-date').value = todayStr;
-        document.getElementById('order-date').min = todayStr;
+        // 確保網頁載入後才執行設定
+        window.onload = () => {
+            renderGiftBoxes(); // 先渲染禮盒
+            renderProducts();  // 再渲染單點
+            
+            // 安全地設定今日日期
+            const todayStr = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('order-date');
+            if (dateInput) {
+                dateInput.value = todayStr;
+                dateInput.min = todayStr;
+            }
+        };
     </script>
 </body>
 </html>
